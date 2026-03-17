@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results Locked</title>
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6fb;
+            text-align:center;
+            padding-top:100px;
+        }
+        .box{
+            background:white;
+            display:inline-block;
+            padding:40px;
+            border-radius:10px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.1);
+        }
+        h2{ color:#e74c3c; }
+        .countdown{
+            font-size:20px;
+            margin-top:20px;
+            color:#2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Results Locked</h2>
+    <p>Results will be available after election ends.</p>
+
+    <div class="countdown">
+        Election Ends At: {{ end_date }}
+    </div>
+
+    <div class="countdown">
+        Time Remaining: {{ remaining }}
+    </div>
+</div>
+
+</body>
+</html>

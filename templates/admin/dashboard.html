@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<title>Admin Dashboard</title>
+
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#1b5e4a">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins', sans-serif;
+background:#d9dfc7;
+}
+
+/* Layout */
+
+.dashboard-container{
+display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:230px;
+background:#7da37c;
+padding:20px;
+display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+.sidebar h2{
+color:white;
+text-align:center;
+margin-bottom:25px;
+}
+
+/* Sidebar buttons */
+
+.side-btn{
+display:block;
+padding:10px;
+background:#1b5e4a;
+color:white;
+text-decoration:none;
+border-radius:8px;
+text-align:center;
+font-size:14px;
+margin-bottom:10px;
+}
+
+.side-btn:hover{
+background:#144536;
+}
+
+/* Reset button */
+
+.reset-btn{
+background:#34495e;
+border:none;
+cursor:pointer;
+}
+
+.reset-btn:hover{
+background:#2c3e50;
+}
+
+
+/* Main content */
+
+.main-content{
+background:#d9dfc7;
+padding:30px;
+flex:1;
+}
+
+/* Topbar */
+
+.topbar{
+background:#1b5e4a;
+color:white;
+padding:15px 20px;
+font-size:20px;
+font-weight:600;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* Logout button (top right) */
+
+.logout-btn{
+background:#e63922;
+padding:8px 16px;
+border-radius:6px;
+text-decoration:none;
+color:#ffffff;
+font-size:14px;
+}
+
+.logout-btn:hover{
+background:#d35400;
+}
+
+
+/* Dashboard cards */
+
+.card{
+border-radius:12px;
+padding:20px;
+text-align:center;
+box-shadow:0px 6px 10px rgba(0,0,0,0.15);
+color:white;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:25px;
+margin-top:30px;
+}
+
+.admins{ background:#6c12f3; }
+.voters{ background:#3498db; }
+.candidates{ background:#8e44ad; }
+.votes{ background:#27ae60; }
+
+/* Forms */
+
+.form-box{
+background:white;
+padding:20px;
+border-radius:8px;
+margin-top:25px;
+}
+
+input{
+padding:8px;
+margin-right:10px;
+}
+
+button{
+padding:8px 12px;
+border:none;
+background:#2c3e50;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1abc9c;
+}
+
+/* Countdown */
+
+#countdown{
+font-size:24px;
+font-weight:bold;
+color:#1b5e4a;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<h2>Admin Panel</h2>
+
+<a class="side-btn" href="/admin/dashboard">🏠 Dashboard</a>
+<a class="side-btn" href="/admin/voters">👥 View Voters</a>
+<a class="side-btn" href="/admin/candidates">🏆 View Candidates</a>
+<a class="side-btn" href="/admin/results">📊 Results</a>
+
+<form action="/admin/reset_election" method="POST">
+<button class="side-btn reset-btn">Reset Election</button>
+</form>
+
+</div>
+
+
+<!-- Main Content -->
+
+<div class="main-content">
+
+<div class="topbar">
+
+<div>Voting System Admin Dashboard</div>
+
+<a href="/admin/logout" class="logout-btn">🚪 Logout</a>
+
+</div>
+
+
+<!-- Cards -->
+
+<div class="cards">
+
+<div class="card admins">
+<h3>Admins</h3>
+<h1>{{ admins }}</h1>
+</div>
+
+<div class="card voters">
+<h3>Voters</h3>
+<h1>{{ voters }}</h1>
+</div>
+
+<div class="card candidates">
+<h3>Candidates</h3>
+<h1>{{ candidates }}</h1>
+</div>
+
+<div class="card votes">
+<h3>Votes Cast</h3>
+<h1>{{ votes }}</h1>
+</div>
+
+</div>
+
+
+<!-- Add Voter -->
+
+<div class="form-box">
+
+<h3>Add Voter</h3>
+
+<form method="POST" action="/admin/add_voter">
+
+Name:
+<input type="text" name="name" required>
+
+Username:
+<input type="text" name="username" required>
+
+Password:
+<input type="password" name="password" required>
+
+<button type="submit">Add Voter</button>
+
+</form>
+
+</div>
+
+
+<!-- Add Candidate -->
+
+<div class="form-box">
+
+<h3>Add Candidate</h3>
+
+<form method="POST" action="/admin/add_candidate" enctype="multipart/form-data">
+
+Name:
+<input type="text" name="name" required>
+
+Party:
+<input type="text" name="party" required>
+
+Symbol:
+<input type="file" name="symbol" required>
+
+<button type="submit">Add Candidate</button>
+
+</form>
+
+</div>
+
+
+<!-- Set Election Time -->
+
+<div class="form-box">
+
+<h3>Set Election Time</h3>
+
+<form method="POST" action="/admin/set_election">
+
+Start Date
+<input type="datetime-local" name="start_date" required>
+
+End Date
+<input type="datetime-local" name="end_date" required>
+
+<button type="submit">Set Election</button>
+
+</form>
+
+</div>
+
+
+<!-- Election Countdown -->
+
+<div class="form-box">
+
+<h3>Election Countdown</h3>
+
+{% if election %}
+
+<p>Start: {{ election.start_date }}</p>
+<p>End: {{ election.end_date }}</p>
+
+<h2 id="countdown"></h2>
+
+<script>
+
+var endDate = new Date("{{ election.end_date }}").getTime();
+
+var timer = setInterval(function() {
+
+var now = new Date().getTime();
+var distance = endDate - now;
+
+if(distance < 0){
+clearInterval(timer);
+document.getElementById("countdown").innerHTML = "Election Ended";
+return;
+}
+
+var days = Math.floor(distance / (1000*60*60*24));
+var hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+var minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+var seconds = Math.floor((distance % (1000*60)) / 1000);
+
+document.getElementById("countdown").innerHTML =
+days + "d " +
+hours + "h " +
+minutes + "m " +
+seconds + "s ";
+
+}, 1000);
+
+</script>
+
+{% else %}
+
+<p>No election configured</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("/static/service-worker.js")
+.then(function(){
+console.log("Service Worker Registered");
+});
+}
+
+</script>
+
+
+</body>
+</html>

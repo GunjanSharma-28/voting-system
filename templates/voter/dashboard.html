@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voter Dashboard</title>
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f6fb;
+            margin:0;
+        }
+
+        .topbar{
+            background: linear-gradient(to right,#2b5876,#4e4376);
+            color:white;
+            padding:20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .logout-btn{
+            background:#e74c3c;
+            color:white;
+            padding:8px 15px;
+            text-decoration:none;
+            border-radius:6px;
+        }
+
+        .container{
+            padding:40px;
+        }
+
+        .candidate-box{
+            background:white;
+            padding:15px;
+            margin-bottom:15px;
+            border-radius:8px;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button{
+            background:#27ae60;
+            color:white;
+            padding:10px 20px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#1e8449;
+        }
+
+        .message{
+            font-size:18px;
+            margin-bottom:20px;
+        }
+
+        .red{ color:red; }
+        .green{ color:green; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div>Voting System - Voter Dashboard</div>
+    <a href="{{ url_for('voter.logout') }}" class="logout-btn">Logout</a>
+</div>
+
+<div class="container">
+
+    {% if not election_active %}
+        <div class="message red">
+            Election is not active.
+        </div>
+
+        {% if settings %}
+            <p>
+                Election starts at: {{ settings.start_date }} <br>
+                Election ends at: {{ settings.end_date }}
+            </p>
+        {% endif %}
+
+    {% elif has_voted %}
+        <div class="message green">
+            You have successfully cast your vote.
+        </div>
+
+    {% elif candidates|length == 0 %}
+        <div class="message red">
+            No candidates available.
+        </div>
+
+    {% else %}
+        <h2>Select Candidate</h2>
+
+        <form method="POST" action="/voter/vote">
+
+            {% for c in candidates %}
+                <div class="candidate-box">
+                    <input type="radio" name="candidate_id"
+                           value="{{ c.candidate_id }}" required>
+
+                    <strong>{{ c.name }}</strong>
+                    ({{ c.party }})
+
+                    {% if c.symbol %}
+                        <br>
+                        <img src="{{ url_for('static', filename='images/symbols/' + c.symbol) }}"
+                             width="50">
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit">Cast Vote</button>
+        </form>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

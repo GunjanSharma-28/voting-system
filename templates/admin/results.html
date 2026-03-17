@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Election Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body{
+            font-family: Arial;
+            margin:0;
+            background:#f4f6fb;
+        }
+
+    .chart-box{
+    width:400px;
+    height:400px;
+    margin:20px auto;
+}
+
+        .topbar{
+            background: linear-gradient(to right,#2b5876,#4e4376);
+            color:white;
+            padding:20px;
+            font-size:22px;
+            font-weight:bold;
+            text-align:center;
+        }
+        .container{
+            padding:40px;
+        }
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+        th, td{
+            padding:12px;
+            text-align:center;
+            border-bottom:1px solid #ddd;
+        }
+        th{
+            background:#34495e;
+            color:white;
+        }
+        img{
+            height:40px;
+        }
+        .winner{
+            margin-top:30px;
+            padding:20px;
+            background:#2ecc71;
+            color:white;
+            text-align:center;
+            border-radius:8px;
+            font-size:18px;
+        }
+        .tie{
+            background:#e67e22;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    Election Results
+</div>
+
+<div class="container">
+
+    <div class="chart-box">
+    <canvas id="voteChart"></canvas>
+</div>
+
+
+    <br><br>
+
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>Votes</th>
+        </tr>
+        {% for r in results %}
+        <tr>
+            <td>
+                {% if r.symbol %}
+                    <img src="{{ url_for('static', filename='images/symbols/' + r.symbol) }}">
+                {% endif %}
+            </td>
+            <td>{{ r.name }}</td>
+            <td>{{ r.party }}</td>
+            <td>{{ r.total_votes }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if winner %}
+        <div class="winner">
+            🏆 Winner: {{ winner.name }} ({{ winner.party }})
+            <br>
+            Total Votes: {{ winner.total_votes }}
+        </div>
+    {% endif %}
+
+    {% if tie %}
+        <div class="winner tie">
+            ⚠ Election Result: It's a Tie!
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+const ctx = document.getElementById('voteChart');
+
+const voteChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [{% for r in results %}'{{ r.name }}',{% endfor %}],
+        datasets: [{
+            data: [{% for r in results %}{{ r.total_votes }},{% endfor %}],
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Online Voting System</title>
+
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#1b5e4a">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins', sans-serif;
+background:linear-gradient(135deg,#415a77,#3a4f7a);
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* Container */
+
+.container{
+background:white;
+padding:40px;
+border-radius:12px;
+width:90%;
+max-width:400px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Title */
+
+h1{
+margin-bottom:10px;
+color:#2c3e50;
+}
+
+.subtitle{
+color:#777;
+font-size:14px;
+margin-bottom:25px;
+}
+
+/* Buttons */
+
+.btn{
+display:block;
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+text-decoration:none;
+color:white;
+margin-bottom:12px;
+}
+
+/* Button colors */
+
+.admin{
+background:#f39c12;
+}
+
+.admin:hover{
+background:#e67e22;
+}
+
+.voter{
+background:#27ae60;
+}
+
+.voter:hover{
+background:#1e8449;
+}
+
+/* Install button */
+
+.install{
+background:#2c3e50;
+display:none;
+}
+
+.install:hover{
+background:#1abc9c;
+}
+
+/* Footer */
+
+.footer{
+margin-top:15px;
+font-size:13px;
+color:#888;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Online Voting System</h1>
+
+<div class="subtitle">
+Secure • Transparent • Real-Time Results
+</div>
+
+<a href="/admin/login" class="btn admin">
+Admin Login
+</a>
+
+<a href="/voter/login" class="btn voter">
+Voter Login
+</a>
+
+<!-- Install Button -->
+<button id="installBtn" class="btn install">
+Install App
+</button>
+
+<div class="footer">
+Final Year Project — Flask + MySQL
+</div>
+
+</div>
+
+
+<!-- PWA Scripts -->
+
+<script>
+
+// Register Service Worker
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("/static/service-worker.js")
+.then(() => console.log("Service Worker Registered"));
+}
+
+// Install App Logic
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = "block";
+});
+
+installBtn.addEventListener("click", async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log("User choice:", outcome);
+
+        deferredPrompt = null;
+        installBtn.style.display = "none";
+    }
+});
+
+</script>
+
+</body>
+</html>

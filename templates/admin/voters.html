@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voters List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background: #2b5876;
+            color: white;
+        }
+        a.delete-btn {
+            color: red;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Voters List</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Has Voted</th>
+        <th>Action</th>
+    </tr>
+
+    {% for v in voters %}
+    <tr>
+        <td>{{ v.voter_id }}</td>
+        <td>{{ v.name }}</td>
+        <td>{{ v.username }}</td>
+        <td>{{ v.has_voted }}</td>
+        <td>
+            <a class="delete-btn"
+               href="/admin/delete_voter/{{ v.voter_id }}"
+               onclick="return confirm('Delete this voter?')">
+               Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="/admin/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

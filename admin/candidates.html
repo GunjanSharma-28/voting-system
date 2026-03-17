@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidates List</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background: #4e4376;
+            color: white;
+        }
+        a.delete-btn {
+            color: red;
+            text-decoration: none;
+        }
+        img {
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Candidates List</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Party</th>
+        <th>Symbol</th>
+        <th>Action</th>
+    </tr>
+
+    {% for c in candidates %}
+    <tr>
+        <td>{{ c.candidate_id }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.party }}</td>
+        <td>
+            {% if c.symbol %}
+                <img src="{{ url_for('static', filename='images/symbols/' + c.symbol) }}" width="40">
+            {% endif %}
+        </td>
+        <td>
+            <a class="delete-btn"
+               href="/admin/delete_candidate/{{ c.candidate_id }}"
+               onclick="return confirm('Delete this candidate?')">
+               Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="/admin/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

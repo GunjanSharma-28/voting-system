@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Voting System</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body{
+            height:100vh;
+            background: linear-gradient(135deg,#2b5876,#4e4376);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .card{
+            width:500px;
+            background:white;
+            padding:40px;
+            border-radius:15px;
+            box-shadow:0 15px 35px rgba(0,0,0,0.3);
+            text-align:center;
+        }
+
+        h1{
+            margin-bottom:10px;
+            color:#2b5876;
+        }
+
+        p{
+            margin-bottom:30px;
+            color:#555;
+        }
+
+        .btn{
+            display:block;
+            width:100%;
+            padding:12px;
+            margin:15px 0;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .admin{
+            background:#f39c12;
+            color:white;
+        }
+
+        .admin:hover{
+            background:#d68910;
+            transform:scale(1.05);
+        }
+
+        .voter{
+            background:#27ae60;
+            color:white;
+        }
+
+        .voter:hover{
+            background:#1e8449;
+            transform:scale(1.05);
+        }
+
+        .footer{
+            margin-top:25px;
+            font-size:13px;
+            color:#999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Online Voting System</h1>
+        <p>Secure • Transparent • Real-Time Results</p>
+
+        <a href="/admin/login" class="btn admin">Admin Login</a>
+        <a href="/voter/login" class="btn voter">Voter Login</a>
+
+        <div class="footer">
+            Final Year Project — Flask + MySQL
+        </div>
+    </div>
+
+</body>
+</html>
