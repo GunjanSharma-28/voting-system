@@ -15,6 +15,17 @@ def dashboard():
         return redirect("/voter/login")
 
     db = get_db_connection()
+
+    # 🚨 If DB not available
+    if not db:
+        return render_template(
+            "voter/dashboard.html",
+            candidates=[],
+            election_active=False,
+            has_voted=False,
+            settings=None
+        )
+
     cur = db.cursor(dictionary=True)
 
     # Get election settings
@@ -62,10 +73,15 @@ def vote():
     if not session.get("voter_id"):
         return redirect("/voter/login")
 
-    candidate_id = request.form.get("candidate_id")
-
     db = get_db_connection()
+
+    # 🚨 If DB not available
+    if not db:
+        return "Voting is disabled (No database connection)."
+
     cur = db.cursor(dictionary=True)
+
+    candidate_id = request.form.get("candidate_id")
 
     # Check election active
     cur.execute("SELECT * FROM election LIMIT 1")
@@ -84,7 +100,7 @@ def vote():
 
     voter = cur.fetchone()
 
-    if voter["has_voted"]:
+    if voter and voter["has_voted"]:
         return "You have already voted."
 
     # Validate candidate

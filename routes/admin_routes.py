@@ -23,6 +23,18 @@ def dashboard():
         return redirect("/admin/login")
 
     db = get_db_connection()
+
+    # 🚨 If DB not available → safe fallback
+    if not db:
+        return render_template(
+            "admin/dashboard.html",
+            admins=0,
+            voters=0,
+            candidates=0,
+            votes=0,
+            election=None
+        )
+
     cur = db.cursor(dictionary=True)
 
     cur.execute("SELECT COUNT(*) AS total FROM admins")
@@ -37,7 +49,6 @@ def dashboard():
     cur.execute("SELECT COUNT(*) AS total FROM votes")
     votes = cur.fetchone()["total"]
 
-    # get active election
     cur.execute("SELECT * FROM election WHERE is_active=1 LIMIT 1")
     election = cur.fetchone()
 
@@ -63,11 +74,14 @@ def add_voter():
     if "admin" not in session:
         return redirect("/admin/login")
 
+    db = get_db_connection()
+    if not db:
+        return "Database not connected."
+
     name = request.form["name"]
     username = request.form["username"]
     password = generate_password_hash(request.form["password"])
 
-    db = get_db_connection()
     cur = db.cursor()
 
     cur.execute(
@@ -76,7 +90,6 @@ def add_voter():
     )
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -92,16 +105,18 @@ def add_candidate():
     if "admin" not in session:
         return redirect("/admin/login")
 
+    db = get_db_connection()
+    if not db:
+        return "Database not connected."
+
     name = request.form["name"]
     party = request.form["party"]
     symbol_file = request.files["symbol"]
 
     filename = secure_filename(symbol_file.filename)
     file_path = os.path.join(UPLOAD_FOLDER, filename)
-
     symbol_file.save(file_path)
 
-    db = get_db_connection()
     cur = db.cursor()
 
     cur.execute(
@@ -110,7 +125,6 @@ def add_candidate():
     )
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -118,7 +132,7 @@ def add_candidate():
 
 
 # ================================
-# SET / UPDATE ELECTION
+# SET ELECTION
 # ================================
 @admin_bp.route("/set_election", methods=["POST"])
 def set_election():
@@ -126,13 +140,15 @@ def set_election():
     if "admin" not in session:
         return redirect("/admin/login")
 
+    db = get_db_connection()
+    if not db:
+        return "Database not connected."
+
     start_date = request.form["start_date"]
     end_date = request.form["end_date"]
 
-    db = get_db_connection()
     cur = db.cursor()
 
-    # remove previous election
     cur.execute("DELETE FROM election")
 
     cur.execute(
@@ -141,7 +157,6 @@ def set_election():
     )
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -158,6 +173,9 @@ def view_voters():
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return render_template("admin/voters.html", voters=[])
+
     cur = db.cursor(dictionary=True)
 
     cur.execute("SELECT * FROM voters")
@@ -179,13 +197,15 @@ def delete_voter(voter_id):
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return redirect("/admin/voters")
+
     cur = db.cursor()
 
     cur.execute("DELETE FROM votes WHERE voter_id=%s", (voter_id,))
     cur.execute("DELETE FROM voters WHERE voter_id=%s", (voter_id,))
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -202,6 +222,9 @@ def view_candidates():
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return render_template("admin/candidates.html", candidates=[])
+
     cur = db.cursor(dictionary=True)
 
     cur.execute("SELECT * FROM candidates")
@@ -223,13 +246,15 @@ def delete_candidate(candidate_id):
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return redirect("/admin/candidates")
+
     cur = db.cursor()
 
     cur.execute("DELETE FROM votes WHERE candidate_id=%s", (candidate_id,))
     cur.execute("DELETE FROM candidates WHERE candidate_id=%s", (candidate_id,))
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -246,13 +271,15 @@ def reset_election():
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return redirect("/admin/dashboard")
+
     cur = db.cursor()
 
     cur.execute("DELETE FROM votes")
     cur.execute("UPDATE voters SET has_voted = FALSE")
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -269,13 +296,15 @@ def delete_all_voters():
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if not db:
+        return redirect("/admin/dashboard")
+
     cur = db.cursor()
 
     cur.execute("DELETE FROM votes")
     cur.execute("DELETE FROM voters")
 
     db.commit()
-
     cur.close()
     db.close()
 
@@ -289,6 +318,9 @@ def delete_all_voters():
 def results():
 
     db = get_db_connection()
+    if not db:
+        return "Database not connected."
+
     cur = db.cursor(dictionary=True)
 
     cur.execute("SELECT * FROM election LIMIT 1")
