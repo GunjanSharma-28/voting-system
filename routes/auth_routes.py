@@ -18,7 +18,7 @@ def admin_login():
 
         # 🚨 If DB NOT available → fallback login
         if not db:
-            if username == "admin" and password == "admin":
+            if username == "admin" and password == "admin123":
                 session["admin"] = True
                 return redirect("/admin/dashboard")
             else:
